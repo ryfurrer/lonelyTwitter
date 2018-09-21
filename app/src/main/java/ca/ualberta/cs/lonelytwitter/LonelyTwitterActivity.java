@@ -99,7 +99,7 @@ public class LonelyTwitterActivity extends Activity {
 		try {
 			FileOutputStream fos = openFileOutput(FILENAME,
 					Context.MODE_APPEND);
-			fos.write(new String(date.toString() + " | " + moodList.toString() + " | " + text + "\n")
+			fos.write((date.toString() + " | " + moodList.toString() + " | " + text + "\n")
 					.getBytes());
 			fos.close();
 		} catch (FileNotFoundException e) {
