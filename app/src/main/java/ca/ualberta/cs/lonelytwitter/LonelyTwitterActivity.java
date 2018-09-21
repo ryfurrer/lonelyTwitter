@@ -1,5 +1,9 @@
 package ca.ualberta.cs.lonelytwitter;
 
+/**
+ *  Finally, added a way for each tweet to have a list of moods.
+ */
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +20,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -23,6 +29,8 @@ public class LonelyTwitterActivity extends Activity {
 	private static final String FILENAME = "file.sav";
 	private EditText bodyText;
 	private ListView oldTweetsList;
+	private CheckBox sadBox;
+	private CheckBox happyBox;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -33,13 +41,23 @@ public class LonelyTwitterActivity extends Activity {
 		bodyText = (EditText) findViewById(R.id.body);
 		Button saveButton = (Button) findViewById(R.id.save);
 		oldTweetsList = (ListView) findViewById(R.id.oldTweetsList);
+		happyBox = (CheckBox) findViewById(R.id.chkHappy);
+		sadBox = (CheckBox) findViewById(R.id.chkDepresseed);
+
 
 		saveButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
+				Date date = new Date(System.currentTimeMillis());
+				ArrayList<Mood> moods = new ArrayList<Mood>();
+				if (happyBox.isChecked())
+					moods.add(new Happy(date));
+				if (sadBox.isChecked())
+					moods.add(new Depressed(date));
+
 				setResult(RESULT_OK);
 				String text = bodyText.getText().toString();
-				saveInFile(text, new Date(System.currentTimeMillis()));
+				saveInFile(text, date, moods);
 				finish();
 
 			}
@@ -77,11 +95,11 @@ public class LonelyTwitterActivity extends Activity {
 		return tweets.toArray(new String[tweets.size()]);
 	}
 	
-	private void saveInFile(String text, Date date) {
+	private <T extends Mood> void saveInFile(String text, Date date, List<T> moodList) {
 		try {
 			FileOutputStream fos = openFileOutput(FILENAME,
 					Context.MODE_APPEND);
-			fos.write(new String(date.toString() + " | " + text)
+			fos.write(new String(date.toString() + " | " + moodList.toString() + " | " + text + "\n")
 					.getBytes());
 			fos.close();
 		} catch (FileNotFoundException e) {

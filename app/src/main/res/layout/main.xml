@@ -19,6 +19,28 @@
 
     </ListView>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/chkHappy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/happy" />
+
+        <CheckBox
+            android:id="@+id/chkDepresseed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="false"
+            android:text="@string/depressed" />
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/hello"
         android:layout_width="fill_parent"

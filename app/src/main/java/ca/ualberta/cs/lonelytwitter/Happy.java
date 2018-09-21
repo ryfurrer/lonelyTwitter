@@ -15,7 +15,7 @@ public class Happy extends Mood {
         super(date);
     }
 
-    String emote() {
+    String format() {
         return "☺";
     }
 }

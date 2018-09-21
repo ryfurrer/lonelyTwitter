@@ -9,8 +9,7 @@ import java.util.Date;
  * Each mood should have a date and getters and setters to access the date.
  * A constructor which sets the date to a default and a constructor which takes a date as an argument should be provided.
  * Encapuslation should be followed.
- * Each mood should also have a mood-dependent format method which returns a string representing the mood.
- * Finally, add a way for each tweet to have a list of moods.
+
  * Your new code should have examples of: classes, methods, attributes, access modifiers, constructors, inheritance, abstract base classes,
  * encapsulation, polymorphism, and generic types.
  * Created by rfurrer on 9/20/18.
@@ -35,10 +34,15 @@ public abstract class Mood {
         this.date = date;
     }
 
-    abstract String emote();
+
+    /**
+     *  Each mood has a mood-dependent format method which returns a string representing the mood.
+     * @return String
+     */
+    abstract String format();
 
     @Override
     public String toString(){
-        return date.toString() + ":  " + this.emote();
+        return this.format();
     }
 }

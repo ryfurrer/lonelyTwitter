@@ -14,7 +14,7 @@ public class Depressed extends Mood {
     public Depressed(Date date) {
         super(date);
     }
-    String emote() {
+    String format() {
         return "☹️";
     }
 }
