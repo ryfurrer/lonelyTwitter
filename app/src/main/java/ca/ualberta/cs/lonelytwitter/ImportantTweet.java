@@ -1,4 +1,7 @@
 package ca.ualberta.cs.lonelytwitter;
+
+import java.util.List;
+
 /**
  * This class code is taken from the lab TAs, as an example done in class. It is
  * included due to TA requirements seen in their eclass post:
@@ -7,7 +10,7 @@ package ca.ualberta.cs.lonelytwitter;
  */
 
 
-public class ImportantTweet extends Tweet {
+public class ImportantTweet<T extends Mood>  extends Tweet {
 
     //Empty argument constructor with default values
     ImportantTweet() {
@@ -17,6 +20,10 @@ public class ImportantTweet extends Tweet {
 
     ImportantTweet(String message) {
         super(message);
+    }
+
+    ImportantTweet(String message, List<T> moods) {
+        super(message, moods);
     }
 
     @Override

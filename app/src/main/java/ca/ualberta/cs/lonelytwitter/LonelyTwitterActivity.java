@@ -57,7 +57,7 @@ public class LonelyTwitterActivity extends Activity {
 
 				setResult(RESULT_OK);
 				String text = bodyText.getText().toString();
-				saveInFile(text, date, moods);
+				saveInFile(text, moods);
 				finish();
 
 			}
@@ -95,11 +95,11 @@ public class LonelyTwitterActivity extends Activity {
 		return tweets.toArray(new String[tweets.size()]);
 	}
 	
-	private <T extends Mood> void saveInFile(String text, Date date, List<T> moodList) {
+	private <T extends Mood> void saveInFile(String text, List<T> moods) {
 		try {
 			FileOutputStream fos = openFileOutput(FILENAME,
 					Context.MODE_APPEND);
-			fos.write((date.toString() + " | " + moodList.toString() + " | " + text + "\n")
+			fos.write(((new NormalTweet(text, moods)).sendTweet())
 					.getBytes());
 			fos.close();
 		} catch (FileNotFoundException e) {

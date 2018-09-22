@@ -15,7 +15,7 @@ import java.util.Date;
  * Created by rfurrer on 9/20/18.
  */
 
-public abstract class Mood {
+public abstract class Mood  {
     private Date date;
 
     public Mood() {
