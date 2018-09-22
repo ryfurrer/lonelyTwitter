@@ -35,6 +35,16 @@ public abstract class Tweet<T extends Mood> implements Tweetable {
         this.date = new Date();
         this.message = message;
         this.moods = moods;
+
+    }
+
+
+    public List<T> getMoods() {
+        return moods;
+    }
+
+    public void setMoods(List<T> moods) {
+        this.moods = moods;
     }
 
     public String getMessage() {
