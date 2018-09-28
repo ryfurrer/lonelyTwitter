@@ -5,17 +5,18 @@ package ca.ualberta.cs.lonelytwitter;
  */
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+
 public class LonelyTwitterActivity extends Activity {
 
 	private static final String FILENAME = "file.sav";
@@ -31,6 +36,9 @@ public class LonelyTwitterActivity extends Activity {
 	private ListView oldTweetsList;
 	private CheckBox sadBox;
 	private CheckBox happyBox;
+	private ArrayList<Tweet> tweets = new ArrayList<Tweet>();
+	private ArrayList<Mood> moods = new ArrayList<Mood>();
+	private ArrayAdapter<Tweet> adapter;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -40,24 +48,43 @@ public class LonelyTwitterActivity extends Activity {
 
 		bodyText = (EditText) findViewById(R.id.body);
 		Button saveButton = (Button) findViewById(R.id.save);
+		Button clearButton = (Button) findViewById(R.id.clear);
 		oldTweetsList = (ListView) findViewById(R.id.oldTweetsList);
-		happyBox = (CheckBox) findViewById(R.id.chkHappy);
-		sadBox = (CheckBox) findViewById(R.id.chkDepresseed);
+		happyBox = (CheckBox) findViewById(R.id.chkHappy);//
+		sadBox = (CheckBox) findViewById(R.id.chkDepresseed);//
 
+		clearButton.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				clearFile();
+				finish();
+
+			}
+		});
 
 		saveButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
 				Date date = new Date(System.currentTimeMillis());
-				ArrayList<Mood> moods = new ArrayList<Mood>();
-				if (happyBox.isChecked())
-					moods.add(new Happy(date));
-				if (sadBox.isChecked())
-					moods.add(new Depressed(date));
+
+				if (happyBox.isChecked())//
+					moods.add(new Happy(date));//
+				if (sadBox.isChecked())//
+					moods.add(new Depressed(date));//
 
 				setResult(RESULT_OK);
-				String text = bodyText.getText().toString();
-				saveInFile(text, moods);
+				ImportantTweet tweet = new ImportantTweet();
+				try{
+
+					tweet.setMessage(bodyText.getText().toString());
+					tweet.setMoods(moods);
+					tweets.add(tweet);
+					adapter.notifyDataSetChanged();
+					saveInFile();
+				} catch (TweetTooLongException e) {
+					e.printStackTrace();
+				}
+
 				finish();
 
 			}
@@ -68,22 +95,40 @@ public class LonelyTwitterActivity extends Activity {
 	protected void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
-		String[] tweets = loadFromFile();
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+		loadFromFile();
+		adapter = new ArrayAdapter<Tweet>(this,
 				R.layout.list_item, tweets);
 		oldTweetsList.setAdapter(adapter);
 	}
 
-	private String[] loadFromFile() {
-		ArrayList<String> tweets = new ArrayList<String>();
+	private void loadFromFile() {
 		try {
 			FileInputStream fis = openFileInput(FILENAME);
-			BufferedReader in = new BufferedReader(new InputStreamReader(fis));
-			String line = in.readLine();
-			while (line != null) {
-				tweets.add(line);
-				line = in.readLine();
-			}
+			BufferedReader reader = new BufferedReader(new InputStreamReader(fis));//
+			Gson gson = new Gson();
+			Type listTweetType = new TypeToken<ArrayList<ImportantTweet>>(){}.getType();
+			tweets = gson.fromJson(reader, listTweetType);
+
+
+		} catch (FileNotFoundException e) {
+			//tweets = new ArrayList<String>();
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	private void saveInFile() {
+		try {
+			FileOutputStream fos = openFileOutput(FILENAME, 0);
+			OutputStreamWriter osw = new OutputStreamWriter(fos);
+			BufferedWriter writer = new BufferedWriter(osw);
+			Gson gson = new Gson();
+			gson.toJson(tweets, writer);
+			writer.flush();
+			writer.close();
+			fos.close();
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -92,22 +137,11 @@ public class LonelyTwitterActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return tweets.toArray(new String[tweets.size()]);
 	}
-	
-	private <T extends Mood> void saveInFile(String text, List<T> moods) {
-		try {
-			FileOutputStream fos = openFileOutput(FILENAME,
-					Context.MODE_APPEND);
-			fos.write(((new NormalTweet(text, moods)).sendTweet())
-					.getBytes());
-			fos.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+	private void clearFile() {
+		tweets = new ArrayList<Tweet>();
+		adapter.notifyDataSetChanged();
+		saveInFile();
 	}
 }

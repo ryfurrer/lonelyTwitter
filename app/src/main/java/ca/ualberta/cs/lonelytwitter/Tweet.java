@@ -6,6 +6,8 @@ package ca.ualberta.cs.lonelytwitter;
  * Their code can be found here: https://github.com/Rosevear/lonelyTwitter
  */
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,12 +49,18 @@ public abstract class Tweet<T extends Mood> implements Tweetable {
         this.moods = moods;
     }
 
+    public void addMood(T mood) { this.moods.add(mood);}
+
+    public void removeMood(T mood) { this.moods.remove(mood);}
+
     public String getMessage() {
         return this.message;
     }
 
-    public String sendTweet() {
-        return date.toString() + " | " + moods.toString() + " | " + this.message + "\n";
+    @Override
+    public String toString() { //" | " + moods.toString() +
+        Log.d("Moods", moods.toString());
+        return date.toString() +  " | " + this.message;
     }
 
     public void setMessage(String message) throws TweetTooLongException {

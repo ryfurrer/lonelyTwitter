@@ -13,18 +13,11 @@ import java.util.List;
 public class ImportantTweet<T extends Mood>  extends Tweet {
 
     //Empty argument constructor with default values
-    ImportantTweet() {
-        //Call the parent constructor to: avoid duplication!
-        super();
-    }
+    ImportantTweet() { super(); }
 
-    ImportantTweet(String message) {
-        super(message);
-    }
+    ImportantTweet(String message) { super(message); }
 
-    ImportantTweet(String message, List<T> moods) {
-        super(message, moods);
-    }
+    ImportantTweet(String message, List<T> moods) { super(message, moods); }
 
     @Override
     public Boolean isImportant() {
