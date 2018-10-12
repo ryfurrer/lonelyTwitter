@@ -13,22 +13,25 @@ import io.searchbox.core.Index;
  * Created by romansky on 10/20/16.
  */
 public class ElasticsearchTweetController {
-    private static JestDroidClient client;
+    private static JestDroidClient client = null;
 
     // TODO we need a function which adds tweets to elastic search
     public static class AddTweetsTask extends AsyncTask<NormalTweet, Void, Void> {
 
         @Override
         protected Void doInBackground(NormalTweet... tweets) {
-            //verifySettings();
+            verifySettings();
 
             for (NormalTweet tweet : tweets) {
                 Index index = new Index.Builder(tweet).index("testing").type("tweet").build();
 
                 try {
-                    // where is the client?
+                    DocumentResult result = client.excute(index);
+                    if(result.isSucceeded()){
+                        tweet.setTweetID(result.getId());
+                    }
                 }
-                catch (Exception e) {
+                catch (IOException e) {
                     Log.i("Error", "The application failed to build and send the tweets");
                 }
 
@@ -61,6 +64,9 @@ public class ElasticsearchTweetController {
 
 
 
+    public static void addTweets(Tweet tweet) {
+
+    }
     public static void verifySettings() {
         if (client == null) {
             DroidClientConfig.Builder builder = new DroidClientConfig.Builder("http://cmput301.softwareprocess.es:8080");

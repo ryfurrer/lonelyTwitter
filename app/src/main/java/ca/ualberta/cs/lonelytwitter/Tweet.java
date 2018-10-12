@@ -5,6 +5,8 @@ import java.util.Date;
 public abstract class Tweet implements Tweetable {
     private String message;
     private Date date;
+    @JestID
+    private String tweetID;
 
     public Tweet(String message){
         this.message = message;
@@ -23,6 +25,9 @@ public abstract class Tweet implements Tweetable {
 
     public abstract Boolean isImportant();
 
+    public void setTweetID(String tweetID) {
+        this.tweetID = tweetID;
+    }
 
     public void setMessage(String message) throws TweetTooLongException {
         if (message.length() > 140){
